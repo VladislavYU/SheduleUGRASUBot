@@ -22,8 +22,12 @@ def get_shedule_group_current_day(id):
     # sheduleCurrentDay = data_json.get['data'].get(str(date))
     print(sheduleCurrentDay)
     return sheduleCurrentDay
-    # for i in sheduleCurrentDay:
-    #     print(i)
+
+def get_shedule_group(id):
+    url = config.main_url + config.shedule_group + str(id)
+    req = requests.get(url)
+    data_json = req.json()
+    return data_json
 
 
 def get_current_date():

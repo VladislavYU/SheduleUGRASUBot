@@ -60,17 +60,14 @@ def parseShedule(shedule_list):
 
 
 def start_command(bot, update):
-    # database.write(update.message.chat_id)
-    database.write(update.message.chat_id)
+    # database.write(update.message)
     bot.send_message(chat_id=update.message.chat_id, text='Введите номер группы')
 
 
 def help_command(bot, update):
-    print(update)
-    print(bot)
-    text = 'GGGGG'
-    # for key, value in command_list:
-    #     text = text + '/' + key + ' – ' + value + '\n'
+    text = ''
+    for key, value in command_list.items():
+        text = text + '/' + key + ' – ' + value + '\n'
     bot.send_message(chat_id=update.message.chat_id, text=text)
 
 
@@ -79,7 +76,6 @@ def text_message(bot, update):
         id = sh.getIdGroup(update.message.text)
         shedule_group = parseShedule(sh.get_shedule_group_current_day(id))
 
-        database.write_group(update.message.chat_id, update.message.text)
         bot.send_message(chat_id=update.message.chat_id, text=shedule_group)
     except:
         bot.send_message(chat_id=update.message.chat_id, text='Группа не найдена или нет занятий на сегодня')
@@ -87,6 +83,11 @@ def text_message(bot, update):
 
 
 def start(bot, update):
+    print(update.message)
+    chat = update.message['chat']
+    print(chat)
+    print(chat['username'])
+    print(chat['first_name'])
     keyboard = []
     keyboard.append([InlineKeyboardButton(u'11', callback_data='1')])
     keyboard.append([InlineKeyboardButton(u'22', callback_data='2')])
@@ -106,7 +107,6 @@ def button(bot, update):
 
 
 def handlerDataCallback(bot, query):
-    print(query.data)
     if query.data == '1':
         keyboard = [[KeyboardButton('button1'), KeyboardButton('button2')]]
         bot.send_message(query.message.chat_id, 'text', reply_markup=ReplyKeyboardMarkup(keyboard, 10))
