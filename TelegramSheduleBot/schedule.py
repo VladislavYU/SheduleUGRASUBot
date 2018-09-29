@@ -13,7 +13,7 @@ def getIdGroup(name):
             return i['id']
 
 
-def get_shedule_group_current_day(id):
+def get_schedule_group_current_day(id):
     url = config.main_url + config.shedule_group + str(id)
     req = requests.get(url)
     data_json = req.json()
@@ -23,11 +23,11 @@ def get_shedule_group_current_day(id):
     print(sheduleCurrentDay)
     return sheduleCurrentDay
 
-def get_shedule_group(id):
+def get_schedule_group(id):
     url = config.main_url + config.shedule_group + str(id)
     req = requests.get(url)
     data_json = req.json()
-    return data_json
+    return data_json['data']
 
 
 def get_current_date():

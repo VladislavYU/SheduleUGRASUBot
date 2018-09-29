@@ -1,3 +1,4 @@
 .DS_Store
 TelegramSheduleBot/config.py
 TelegramSheduleBot/database.db
+TelegramSheduleBot/test.py
