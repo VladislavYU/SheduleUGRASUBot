@@ -26,7 +26,8 @@ types = {
 
 command_list = {
     'start': 'start bot',
-    'help': 'help'
+    'help': 'help',
+    'номер группы': 'получение расписаия группы на сегодня'
 }
 
 
@@ -131,8 +132,8 @@ def main():
     dispatcher.add_handler(start_command_handler)
     dispatcher.add_handler(text_message_handler)
     dispatcher.add_handler(help_command_handler)
-    dispatcher.add_handler(CallbackQueryHandler(button))
-    dispatcher.add_handler(CommandHandler('start_new', start))
+    # dispatcher.add_handler(CallbackQueryHandler(button))
+    # dispatcher.add_handler(CommandHandler('start_new', start))
 
     # Начинаем поиск обновлений
     updater.start_polling(clean=True)
