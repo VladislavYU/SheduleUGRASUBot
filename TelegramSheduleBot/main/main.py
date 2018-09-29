@@ -1,12 +1,10 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-import config, re
-import logging
-import datetime
-import schedule as sh
 from emoji import emojize
-import database
+import config, re, datetime, logging
+import schedule as sh
+
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -87,8 +85,13 @@ def get_schedule_week_after(schedule):
                 timetable[key] = value
                 break
 
-    text = ''
+    text = get_text_schedule_from_dict(timetable)
 
+    return text
+
+
+def get_text_schedule_from_dict(timetable):
+    text = ''
     for day, schedule in timetable.items():
         text = text + '\n' + emojize(":calendar:", use_aliases=True) + day + '\n'
         for i in schedule:
@@ -111,7 +114,6 @@ def get_schedule_week_after(schedule):
                 text = text + '\n' + '🔸️Подгруппа ' + subgroup
 
             text = text + '\n'
-
     return text
 
 
@@ -129,29 +131,7 @@ def get_schedule_week_before(schedule):
                 timetable[key] = value
                 break
 
-    text = ''
-
-    for day, schedule in timetable.items():
-        text = text + '\n' + emojize(":calendar:", use_aliases=True) + day + '\n'
-        for i in schedule:
-            time_begin = i['time_begin']
-            time_end = i['time_end']
-            subject_name = i['subject_name']
-            lesson_type = i['lesson_type']['name']
-            lesson_type_id = i['lesson_type']['id']
-            lector = i['lector']['lector_name']
-            location = i['location']
-            subgroup = i['group']['subgroup']
-            text = text + '\n' + \
-                   '⏰' + time_begin + ' - ' + \
-                   time_end + '\n' + \
-                   types[lesson_type_id] + subject_name + ' (' + lesson_type + ')' + '\n' + \
-                   '🎓' + lector + '\n' + \
-                   '📍' + location
-
-            if subgroup != None:
-                text = text + '\n' + '🔸️Подгруппа ' + subgroup + '\n'
-            text = text + '\n'
+    text = get_text_schedule_from_dict(timetable)
 
     return text
 
@@ -179,13 +159,9 @@ def text_message(bot, update):
         bot.send_message(chat_id=update.message.chat_id, text='Группа не найдена')
 
 
-
+# для теста
 def start(bot, update):
-    print(update.message)
     chat = update.message['chat']
-    print(chat)
-    print(chat['username'])
-    print(chat['first_name'])
     keyboard = []
     keyboard.append([InlineKeyboardButton(u'11', callback_data='1')])
     keyboard.append([InlineKeyboardButton(u'22', callback_data='2')])
@@ -194,7 +170,7 @@ def start(bot, update):
     update.message.reply_text('Please choose:', reply_markup=reply_markup)
 
 
-
+# для теста
 def button(bot, update):
     query = update.callback_query
     keyboard = [[KeyboardButton('button1'), KeyboardButton('button2')]]
@@ -202,7 +178,7 @@ def button(bot, update):
     handlerDataCallback(bot, query)
 
     # bot.send_message(query.message.chat_id, 'Some text', reply_markup=reply_markup)
-
+###
 
 def handlerDataCallback(bot, query):
     start = re.split(r' ', query.data)
@@ -215,6 +191,7 @@ def handlerDataCallback(bot, query):
         msg = get_schedule_week_before(sh.get_schedule_group(start[1]))
         bot.send_message(chat_id=query.message.chat_id, text=msg)
 
+    ### для теста
     if query.data == '1':
         keyboard = [[KeyboardButton('button1'), KeyboardButton('button2')]]
         bot.send_message(query.message.chat_id, 'text', reply_markup=ReplyKeyboardMarkup(keyboard, 10))
@@ -224,7 +201,7 @@ def handlerDataCallback(bot, query):
     if query.data == '3':
         keyboard = [[KeyboardButton('button6')]]
         bot.send_message(query.message.chat_id, 'text', reply_markup=ReplyKeyboardMarkup(keyboard, 10))
-
+    ###
 
 def main():
     updater = Updater(token=config.TOKEN)

@@ -3,13 +3,13 @@ import config
 import datetime
 import re
 
+
 def getIdGroup(name):
     req = requests.get(config.main_url + config.list_group)
     data = req.json()
     print(data)
     for i in data['data']:
         if re.search(name, i['name']):
-        # if name == i['name']:
             return i['id']
 
 
@@ -18,10 +18,11 @@ def get_schedule_group_current_day(id):
     req = requests.get(url)
     data_json = req.json()
     date = datetime.date.today()
-    sheduleCurrentDay = data_json['data'][str(date)]
+    schedule_current_day = data_json['data'][str(date)]
     # sheduleCurrentDay = data_json.get['data'].get(str(date))
-    print(sheduleCurrentDay)
-    return sheduleCurrentDay
+    print(schedule_current_day)
+    return schedule_current_day
+
 
 def get_schedule_group(id):
     url = config.main_url + config.shedule_group + str(id)
