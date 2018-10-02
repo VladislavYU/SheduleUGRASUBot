@@ -22,6 +22,31 @@ types = {
     10: '📑'
 }
 
+week_days = {
+    0: 'Понедельник',
+    1: 'Вторник',
+    2: 'Среда',
+    3: 'Четверг',
+    4: 'Пятница',
+    5: 'Суббота',
+    6: 'Воскресенье',
+}
+
+mounts = {
+    1: 'Января',
+    2: 'Февраля',
+    3: 'Марта',
+    4: 'Апреля',
+    5: 'Мая',
+    6: 'Июня',
+    7: 'Июля',
+    8: 'Августа',
+    9: 'Сентября',
+    10: 'Октября',
+    11: 'Ноября',
+    12: 'Декабря',
+}
+
 
 command_list = {
     'start': 'start bot',
@@ -30,16 +55,26 @@ command_list = {
 }
 
 
+def get_formated_date(date):
+    mass_date = re.split('-', date)
+    date = datetime.date(int(mass_date[0]), int(mass_date[1]), int(mass_date[2]))
+    week_day = week_days.get(date.weekday())
+    day = date.strftime(" %d ")
+    month = mounts[int(date.month)]
+    return week_day + day + month
 
-
-def parseschedule(schedule_list):
+def parse_schedule(schedule_list):
     date = sh.get_current_date()
     group = schedule_list[0]['group']['group_name']
-    text = emojize(":calendar:", use_aliases=True) + date + '\n' + group
+    text = emojize(":calendar:", use_aliases=True) + get_formated_date(date) + '\n' + group
 
     for i in schedule_list:
         time_begin = i['time_begin']
+        time_begin_full = re.split(':', time_begin)
+        time_begin = time_begin_full[0] + ':' + time_begin_full[1]
         time_end = i['time_end']
+        time_end_full = re.split(':', time_end)
+        time_end = time_end_full[0] + ':' + time_end_full[1]
         subject_name = i['subject_name']
         lesson_type = i['lesson_type']['name']
         lesson_type_id = i['lesson_type']['id']
@@ -93,10 +128,14 @@ def get_schedule_week_after(schedule):
 def get_text_schedule_from_dict(timetable):
     text = ''
     for day, schedule in timetable.items():
-        text = text + '\n' + emojize(":calendar:", use_aliases=True) + day + '\n'
+        text = text + '\n' + emojize(":calendar:", use_aliases=True) + get_formated_date(day) + '\n'
         for i in schedule:
             time_begin = i['time_begin']
+            time_begin_full = re.split(':', time_begin)
+            time_begin = time_begin_full[0] + ':' + time_begin_full[1]
             time_end = i['time_end']
+            time_end_full = re.split(':', time_end)
+            time_end = time_end_full[0] + ':' + time_end_full[1]
             subject_name = i['subject_name']
             lesson_type = i['lesson_type']['name']
             lesson_type_id = i['lesson_type']['id']
@@ -114,6 +153,7 @@ def get_text_schedule_from_dict(timetable):
                 text = text + '\n' + '🔸️Подгруппа ' + subgroup
 
             text = text + '\n'
+        text = text + '________________________'
     return text
 
 
@@ -152,7 +192,7 @@ def text_message(bot, update):
         if scheduleCurrentDay == None:
             update.message.reply_text('Занятий на сегодня нет', reply_markup=reply_markup)
         else:
-            schedule_group = parseschedule(scheduleCurrentDay)
+            schedule_group = parse_schedule(scheduleCurrentDay)
             update.message.reply_text(schedule_group, reply_markup=reply_markup)
 
     except:
